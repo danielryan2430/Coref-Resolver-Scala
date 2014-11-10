@@ -76,8 +76,8 @@
       <file leaf-file-name="DocumentScanner.scala" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/resolver/parser/document/DocumentScanner.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.14522822" vertical-offset="0" max-vertical-offset="2565">
-              <caret line="7" column="86" selection-start-line="7" selection-start-column="33" selection-end-line="7" selection-end-column="33" />
+            <state vertical-scroll-proportion="0.22821577" vertical-offset="0" max-vertical-offset="2595">
+              <caret line="11" column="48" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
               <folding />
             </state>
           </provider>
@@ -514,8 +514,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/resolver/parser/document/DocumentScanner.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.14522822" vertical-offset="0" max-vertical-offset="2565">
-          <caret line="7" column="86" selection-start-line="7" selection-start-column="33" selection-end-line="7" selection-end-column="33" />
+        <state vertical-scroll-proportion="0.22821577" vertical-offset="0" max-vertical-offset="2595">
+          <caret line="11" column="48" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
           <folding />
         </state>
       </provider>

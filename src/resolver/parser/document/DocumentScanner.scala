@@ -1,16 +1,18 @@
 package resolver.parser.document
+import scala.io.Source
 
 /**
  * Created by dimberman on 11/9/14.
  */
 class DocumentScanner {
 
-  def scanDocument(): Document= {
-    val s = "asbasdfsdafadfas"
+  def scanDocument(fileName:String): Document= {
+    val srce = Source.fromFile(fileName)
+    val s = srce.mkString
+    srce.close()
     val s1 = scanChar(s, "", "", 0, Seq());
     return new Document(s1)
   }
-
 
   def scanChar(s: String, prevWord: String, currentWord: String, sentenceNum: Int, c: Seq[Classifier]): Seq[Classifier] = {
     s.head match {
