@@ -14,7 +14,7 @@ class DocumentScanner {
     return new Document(s1)
   }
 
-  def scanChar(s: String, prevWord: String, currentWord: String, sentenceNum: Int, c: Seq[Classifier]): Seq[Classifier] = {
+  def scanChar(s: String, prevWord: String, currentWord: String, sentenceNum: Int, c: Seq[FeatureSet]): Seq[FeatureSet] = {
     s.head match {
       case '<' => pullIdent(s.tail, "", prevWord, sentenceNum, c)
       case ' ' => scanChar(s.tail, currentWord, "", sentenceNum, c)
@@ -25,13 +25,13 @@ class DocumentScanner {
   }
 
 
-  def pullIdent(s: String, ident: String, prevWord: String, sentenceNum: Int, c: Seq[Classifier]): Seq[Classifier] = {
+  def pullIdent(s: String, ident: String, prevWord: String, sentenceNum: Int, c: Seq[FeatureSet]): Seq[FeatureSet] = {
     val currentLetter = ident.head
     currentLetter match {
       case '>' => {
         if (ident.contains("/COREF")) {
-          val nextWord = peekAhead(s,"")
-          scanChar(s.tail, c.last.lastWord, "", sentenceNum, c :+ identifyClassifier(ident :+ currentLetter, c, sentenceNum, prevWord, nextWord))
+          val nextWord = peekAhead(s.tail,"")
+          scanChar(s.tail, c.last.lastWord, "", sentenceNum, c :+ identifyFeatureSet(ident :+ currentLetter, c, sentenceNum, prevWord, nextWord))
         }
         pullIdent(s.tail, ident :+ currentLetter, prevWord, sentenceNum, c)
       }
@@ -41,7 +41,7 @@ class DocumentScanner {
   }
 
 
-  def identifyClassifier(s: String, c: Seq[Classifier], sentenceNum: Int, prevWord: String, nextWord: String): Classifier = {
+  def identifyFeatureSet(s: String, c: Seq[FeatureSet], sentenceNum: Int, prevWord: String, nextWord: String): FeatureSet = {
     //    val feature =  pullFeatures(s, null,null,null,null,null,null,null,null,null, c, sentenceNum)
     val splitCriteria = "<|>"
     val splitString = s.split(splitCriteria)
@@ -55,7 +55,7 @@ class DocumentScanner {
     val lastWord = findLastWord(splitString(1))
 
 
-    new Classifier(refID, sentenceNum, mentionType, completePhrase, semHead, firstWord, lastWord, prevWord, nextWord, sDist, mDist)
+    new FeatureSet(refID, sentenceNum, mentionType, completePhrase, semHead, firstWord, lastWord, prevWord, nextWord, sDist, mDist)
 
   }
 
@@ -113,7 +113,7 @@ class DocumentScanner {
     s.split(" ").last
   }
 
-  def findSentenceDistance(refID: Int, c: Seq[Classifier], currentSentence: Int): Int = {
+  def findSentenceDistance(refID: Int, c: Seq[FeatureSet], currentSentence: Int): Int = {
     c.last match {
       case null => -1
       case s if c.last.refID == refID => currentSentence - c.last.sentenceNum
@@ -122,7 +122,7 @@ class DocumentScanner {
   }
 
 
-  def findMentionDistance(refID: Int, c: Seq[Classifier], distance: Int): Int = {
+  def findMentionDistance(refID: Int, c: Seq[FeatureSet], distance: Int): Int = {
     c.last match {
       case null => -1
       case s if c.last.refID == refID => distance
@@ -152,7 +152,7 @@ class DocumentScanner {
 }
 
 
-class Classifier(rID: Int, sNum: Int, mType: String, cString: String, sHead: String, fWord: String, lWord: String, pWord: String, nWord: String, sDist: Int, mDist: Int) {
+class FeatureSet(rID: Int, sNum: Int, mType: String, cString: String, sHead: String, fWord: String, lWord: String, pWord: String, nWord: String, sDist: Int, mDist: Int) {
   val refID: Int = rID
   val sentenceNum: Int = sNum
   val mentionType: String = mType
