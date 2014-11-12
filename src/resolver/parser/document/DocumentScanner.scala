@@ -31,7 +31,7 @@ class DocumentScanner {
       case '>' => {
         if (ident.contains("/COREF")) {
           val nextWord = peekAhead(s.tail,"")
-          scanChar(s.tail, c.last.lastWord, "", sentenceNum, c :+ identifyFeatureSet(ident :+ currentLetter, c, sentenceNum, prevWord, nextWord))
+          scanChar(s.tail, c.last.lastWord, "", sentenceNum, c :+ generateFeatureSet(ident :+ currentLetter, c, sentenceNum, prevWord, nextWord))
         }
         pullIdent(s.tail, ident :+ currentLetter, prevWord, sentenceNum, c)
       }
@@ -41,8 +41,7 @@ class DocumentScanner {
   }
 
 
-  def identifyFeatureSet(s: String, c: Seq[FeatureSet], sentenceNum: Int, prevWord: String, nextWord: String): FeatureSet = {
-    //    val feature =  pullFeatures(s, null,null,null,null,null,null,null,null,null, c, sentenceNum)
+  def generateFeatureSet(s: String, c: Seq[FeatureSet], sentenceNum: Int, prevWord: String, nextWord: String): FeatureSet = {
     val splitCriteria = "<|>"
     val splitString = s.split(splitCriteria)
     val refID = findRefID(splitString(0))
@@ -59,12 +58,6 @@ class DocumentScanner {
 
   }
 
-  //  def pullFeatures(s:String, mType:String, cString:String, sHead:String, fWord:String, lWord:String, pWord:String, nWord:String, sDist:Int, mDist:Int, c: Seq[Classifier], sentenceNum:Int): Classifier ={
-  //
-  //  val refID:Int = null
-  //
-  //
-  //  }
 
 
   val itemFinder: (String, String, String, (String, String) => String) => String =
