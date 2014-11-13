@@ -42,6 +42,7 @@ class DocumentScanner {
 
 
   def generateFeatureSet(s: String, c: Seq[FeatureSet], sentenceNum: Int, prevWord: String, nextWord: String): FeatureSet = {
+    val menID = if(!(c.isEmpty)) c.last.mentionID+1 else 0
     val splitCriteria = "<|>"
     val splitString = s.split(splitCriteria)
     val refID = findRefID(splitString(0))
@@ -54,7 +55,7 @@ class DocumentScanner {
     val lastWord = findLastWord(splitString(1))
 
 
-    new FeatureSet(refID, sentenceNum, mentionType, completePhrase, semHead, firstWord, lastWord, prevWord, nextWord, sDist, mDist)
+    new FeatureSet(menID, refID, sentenceNum, mentionType, completePhrase, semHead, firstWord, lastWord, prevWord, nextWord, sDist, mDist)
 
   }
 
@@ -145,7 +146,8 @@ class DocumentScanner {
 }
 
 
-class FeatureSet(rID: Int, sNum: Int, mType: String, cString: String, sHead: String, fWord: String, lWord: String, pWord: String, nWord: String, sDist: Int, mDist: Int) {
+class FeatureSet(mID:Int, rID: Int, sNum: Int, mType: String, cString: String, sHead: String, fWord: String, lWord: String, pWord: String, nWord: String, sDist: Int, mDist: Int) {
+  val mentionID: Int = mID
   val refID: Int = rID
   val sentenceNum: Int = sNum
   val mentionType: String = mType
