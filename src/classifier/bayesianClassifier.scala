@@ -6,11 +6,11 @@ import resolver.parser.document._
  * Created by serenity on 11/10/14.
  */
 object bayesianClassifier {
+  //using weight vector, create a score for a featureSet
+  def weightMult: Seq[Double] => Double = (input: Seq[Double]) => input.zip(weights).foldLeft(0.0) { case (a, (b, c)) => a + b * c};
+
 
   def classify(weights: Seq[Double], d: Document, featureExtractor: (Document, Int, Int) => Seq[Double]): List[Int] = {
-
-    //using weight vector, create a score for a featureSet
-    def weightMult: Seq[Double] => Double = (input: Seq[Double]) => input.zip(weights).foldLeft(0.0) { case (a, (b, c)) => a + b * c};
 
     def findBestCorrelatedFeature(maxChoiceAccum: (Int, Double), maxChoiceFeat: FeatureSet, liveFeature: FeatureSet): (Int, Double) = {
       //1. the returned feature has a base setting of new (score btw f.ID and itself...)
@@ -36,5 +36,23 @@ object bayesianClassifier {
     }._1 //return the list of assigned mentions--it is ordered so it directly corresponds to an A vector.
   } // finish up.
 
+  //does the same thing as classification, except instead of returning the maximum, it simply returns the entire list of score vectors. (so doc 1 has 1, doc 2 has 2...
+  def scoreVect(weights: Seq[Double], d: Document, featureExtractor: (Document, Int, Int) => Seq[Double]):Seq[Seq[Double]] = {
 
+    def scoreFeatures(scoreList: List[Double], newFeat: FeatureSet, liveFeature: FeatureSet): List[Double] = {
+      //1. the returned feature has a base setting of new (score btw f.ID and itself...)
+      val C = weightMult(featureExtractor(d, liveFeature.mentionID, newFeat.mentionID))
+      scoreList :+ C
+    }
+
+
+    //D:(List[ListDouble] = scores, List[FeatureSet] = previous mention features), foldLeft all feature descriptions in Document D
+    ((List[List[Double]](), List[FeatureSet]()) /: d.features) {
+      //Part one of the accum  the second part of the accumulator holds all of the references seen so far so we can build the mention list up correctly.
+      //D: accum is the current list of tuples(refID, FeatureSet) while liveFeature represents a current mention that is being used to generate a new tuple value
+      (accum:(List[List[Double]],List[FeatureSet]), liveFeature:FeatureSet) => (accum._1 :+ ((List(weightMult(featureExtractor(d, liveFeature.mentionID, liveFeature.mentionID))) /: accum._2)
+        {(scoreList:List[Double], newFeat:FeatureSet) => scoreFeatures(scoreList, newFeat, liveFeature)}.reverse) // then return the choice Made.
+        , liveFeature +: accum._2 ) // bind to it the list of all choices to consider next time backwards. Now the score matrix is entirly backwards so reverse it.
+    }._1 //return the list of assigned mentions--it is ordered so it directly corresponds to an A vector.
+  }
 }
